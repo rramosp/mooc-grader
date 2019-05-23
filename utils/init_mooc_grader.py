@@ -682,18 +682,28 @@ if sys.argv[1]=="SUBMIT_SOLUTION":
 
    wks = gf.worksheet("submissions")
    col1 = wks.col_values(1)
+   # check in case worksheet is empty
+   if len(col1)==0 or col1[0]=='':
+        wks.update_acell('A1', "SUBMISSION DATE")
+        wks.update_acell('B1', "PROBLEM NUMBER")
+        wks.update_acell('C1', "RESULT")
+        wks.update_acell('D1', "REMARKS")
+        wks.update_acell('E1', "CODE")
+        col1 = wks.col_values(1)
+
    for i in range(len(col1)):
        if col1[i]=='':
            break
 
+   print "checking result", pid, "COLS", col1, "ROW EMPTY", i+1
    result = check_solution(pid)
    comentario = check_result(result,pid)
    datestr = datetime2str(get_localized_inet_time())
-   wks.update_cell(i+1,1,datestr)
-   wks.update_cell(i+1,2,pid)
-   wks.update_cell(i+1,3,result)
-   wks.update_cell(i+1,5,src)
-   wks.update_cell(i+1,6,comentario)
+   wks.update_cell(i+2,1,datestr)
+   wks.update_cell(i+2,2,pid)
+   wks.update_cell(i+2,3,result)
+   wks.update_cell(i+2,5,src)
+   wks.update_cell(i+2,6,comentario)
 
    if hard_deadline_expired:
        wks.update_cell(i+1,4, "HARDDEADLINE EXPIRED")
