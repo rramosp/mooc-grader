@@ -57,17 +57,18 @@ def google_drive_remove_files(service, fname):
 def google_drive_create_file(gc, fname, email):
 
     template = gc.create(fname)
+    template = gc.open(fname)
     template.add_worksheet('submissions', 100, 100)
     template.add_worksheet('summary',100,100)
+    template.del_worksheet(template.worksheet('Sheet1'))
+    template.share('##EMAIL##', perm_type='user', role='writer')
+    template.share(email, perm_type='user', role='reader')
     template.get_worksheet(0).update_acell('A1', "SUBMISSION DATE")
     template.get_worksheet(0).update_acell('B1', "PROBLEM NUMBER")
     template.get_worksheet(0).update_acell('C1', "RESULT")
     template.get_worksheet(0).update_acell('D1', "REMARKS")
     template.get_worksheet(0).update_acell('E1', "CODE")
-    template = gc.open(fname)
-    template.del_worksheet(template.worksheet('Sheet1'))
-    template.share('##EMAIL##', perm_type='user', role='writer')
-    template.share(email, perm_type='user', role='reader')
+
 
 def google_drive_create_file_grade_final(gc, sname):
     grade = gc.create(sname)
@@ -589,9 +590,12 @@ if sys.argv[1]=="CREATE_MOOCGRADER":
 
     else:
         template = gc.create(fname)
+        print "Creating worksheet config "+fname+" ..."
 
-        print "Creating "+fname+" ..."
+        template = gc.open(fname)
         template.add_worksheet('config', 100, 10)
+        template.del_worksheet(template.worksheet('Sheet1'))
+        template.share('##EMAIL##', perm_type='user', role='writer')
         template.get_worksheet(0).update_acell('A1', "BLOCK NAME")
         template.get_worksheet(0).update_acell('B1', "BLOCK WEIGHT")
         template.get_worksheet(0).update_acell('C1', "SECTION NAME")
@@ -602,12 +606,7 @@ if sys.argv[1]=="CREATE_MOOCGRADER":
         template.get_worksheet(0).update_acell('H1', "SECTION HARDDEADLINE PENALTY")
         template.get_worksheet(0).update_acell('I1', "SECTION SOFTDEADLINE")
         template.get_worksheet(0).update_acell('J1', "SECTION SOFTDEADLINE PENALTY")
-
-        print "Creating worksheet config"+"..."
-        template.share('##EMAIL##', perm_type='user', role='writer')
-        template = gc.open(fname)
-        template.del_worksheet(template.worksheet('Sheet1'))
-        print "Sharing "+fname+"..."
+        
         print "OK.. "+fname+" created"
         print "https://docs.google.com/spreadsheets/d/"+template.id
 
